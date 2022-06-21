@@ -48,19 +48,14 @@ def erosion(gray, idx):
         eroded = cv2.erode(eroded, None, iterations=i + 1)
     return eroded
 
-# Opens the Video file
-camera = 'fisheye'
-files = os.listdir(f'Source/{camera}')
-print(files)
 
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
-
-background = cv2.imread('background_macp.jpg', cv2.IMREAD_GRAYSCALE)
+background = cv2.imread('background_test.jpg', cv2.IMREAD_GRAYSCALE)
 mot_tracker = Sort(max_age=30, min_hits=3, iou_threshold=0.05)
 fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(nmixtures=4, history=5000)
 detectionidx = 0
 
-cap= cv2.VideoCapture(f'macp.mp4')
+cap= cv2.VideoCapture(f'test.mp4')
 i=0
 ret, ppv_frame = cap.read()
 ppv_frame = cv2.cvtColor(ppv_frame, cv2.COLOR_BGR2GRAY)
@@ -73,11 +68,9 @@ while(cap.isOpened()):
     display = frame.copy()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     background_sub = cv2.subtract(gray, background)
-    # _, background_sub = cv2.threshold(background_sub, 20, 255, cv2.THRESH_BINARY)
-    # background_sub = cv2.medianBlur(background_sub, 5)
+    _, background_sub = cv2.threshold(background_sub, 20, 255, cv2.THRESH_BINARY)
     fgmask = fgbg.apply(frame)
-    mask = fgmask
-    # mask = cv2.addWeighted(fgmask, 0.5, background_sub, 0.5, 0)
+    mask = cv2.addWeighted(fgmask, 0.5, background_sub, 0.5, 0)
     # mask = cv2.addWeighted(mask, 0.5, flow_sub_2, 0.5, 0)
 
     median = cv2.medianBlur(mask, 7)
@@ -85,7 +78,6 @@ while(cap.isOpened()):
     thresh = dilatation(thresh, 3)
     # thresh = erosion(thresh, 2)
     # masked = cv2.bitwise_and(frame, frame, mask=median)
-    #
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # contours = cv2.convexHull(contours)
     dets = []
@@ -132,7 +124,7 @@ while(cap.isOpened()):
     i+=1
     prev_frame = gray
     ppv_frame = prev_frame
-print(id)
+
 cap.release()
 
 

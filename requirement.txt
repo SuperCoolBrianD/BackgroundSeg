@@ -1,0 +1,6 @@
+scikit-image
+numpy
+lap
+filterpy
+opencv-contrib-python
+matplotlib>=3.2.2
