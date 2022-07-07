@@ -89,7 +89,7 @@ def res_classifer(image, categories, model, batch=64):
 # Opens the Video file
 cap= cv2.VideoCapture(f'test.mp4')
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
-model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
+model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet34', pretrained=True)
 background = cv2.imread('background_test.jpg', cv2.IMREAD_GRAYSCALE)
 mot_tracker = Sort(max_age=30, min_hits=3, iou_threshold=0.05)
 detectionidx = 0
@@ -102,7 +102,7 @@ ret, ppv_frame = cap.read()
 ppv_frame = cv2.cvtColor(ppv_frame, cv2.COLOR_BGR2GRAY)
 ret, prev_frame = cap.read()
 prev_frame = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
-fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(nmixtures=4, history=5000)
+fgbg = cv2.createBackgroundSubtractorMOG2( history=5000)
 while(cap.isOpened()):
 
     ret, frame = cap.read()
@@ -154,7 +154,7 @@ while(cap.isOpened()):
     except ValueError:
         continue
     display = drawtrack(trk, display)
-    id = max(trk[:, -1])
+    # id = max(trk[:, -1])
 
     # print(trk)
     # cv2.drawContours(display, contours, -1, (0, 255, 0), 3)
